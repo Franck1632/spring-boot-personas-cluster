@@ -1,14 +1,74 @@
 version: '3.8'
 
+# Configuración base común para los 10 contenedores
+x-app-base: &app-base
+  image: demo-app:v2
+  mem_limit: 160m
+  environment:
+    JAVA_TOOL_OPTIONS: "-Xmx96m -Xms48m"
+    SPRING_DATASOURCE_URL: "jdbc:mariadb://10.4.73.80:3306/empresa?connectTimeout=10000"
+    SPRING_DATASOURCE_USERNAME: "appuser"
+    SPRING_DATASOURCE_PASSWORD: "apppass"
+    SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: "org.hibernate.dialect.MariaDBDialect"
+  restart: always
+
 services:
-  app:
-    build: .
-    image: demo-app:v2
-    container_name: demo-app-container
+  app_30000:
+    <<: *app-base
+    container_name: app_30000
     ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://10.4.74.240:3306/empresa?connectTimeout=10000
-      - SPRING_DATASOURCE_USERNAME=appuser
-      - SPRING_DATASOURCE_PASSWORD=apppass
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MariaDBDialect
+      - "30000:8080"
+
+  app_30001:
+    <<: *app-base
+    container_name: app_30001
+    ports:
+      - "30001:8080"
+
+  app_30002:
+    <<: *app-base
+    container_name: app_30002
+    ports:
+      - "30002:8080"
+
+  app_30003:
+    <<: *app-base
+    container_name: app_30003
+    ports:
+      - "30003:8080"
+
+  app_30004:
+    <<: *app-base
+    container_name: app_30004
+    ports:
+      - "30004:8080"
+
+  app_30005:
+    <<: *app-base
+    container_name: app_30005
+    ports:
+      - "30005:8080"
+
+  app_30006:
+    <<: *app-base
+    container_name: app_30006
+    ports:
+      - "30006:8080"
+
+  app_30007:
+    <<: *app-base
+    container_name: app_30007
+    ports:
+      - "30007:8080"
+
+  app_30008:
+    <<: *app-base
+    container_name: app_30008
+    ports:
+      - "30008:8080"
+
+  app_30009:
+    <<: *app-base
+    container_name: app_30009
+    ports:
+      - "30009:8080"
