@@ -2,8 +2,8 @@ package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -25,26 +25,27 @@ public class PersonaDbController {
         return "Aplicacion compilada y desplegada por: [" + nombreEstudiante + "]";
     }
 
-    // 1. OBTENER LISTA PAGINADA ORGANIZADA Y CON TU NOMBRE
+    // 1. OBTENER LISTA PAGINADA ULTRARRÁPIDA CON TUS DATOS
     @GetMapping
     public Map<String, Object> listarPersonas(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        Page<PersonaEntity> personasPage = personaRepository.findAll(PageRequest.of(page, size));
+        // Uso de Slice para omitir el COUNT(*) pesado sobre 10M de registros
+        Slice<PersonaEntity> personasSlice = personaRepository.findAllBy(PageRequest.of(page, size));
 
         Map<String, Object> respuesta = new HashMap<>();
         // Cabecera con tus datos
         respuesta.put("estudiante", nombreEstudiante);
         respuesta.put("materia", "Sistemas Distribuidos");
         
-        // Paginación resumida y organizada
-        respuesta.put("paginaActual", personasPage.getNumber());
-        respuesta.put("totalPaginas", personasPage.getTotalPages());
-        respuesta.put("totalRegistros", personasPage.getTotalElements());
+        // Información de paginación ligera
+        respuesta.put("paginaActual", personasSlice.getNumber());
+        respuesta.put("tieneSiguiente", personasSlice.hasNext());
+        respuesta.put("elementosEnPagina", personasSlice.getNumberOfElements());
 
-        // Solamente la lista de datos (sin objetos 'pageable' o 'sort' gigantes)
-        respuesta.put("datos", personasPage.getContent());
+        // Solamente la lista de datos
+        respuesta.put("datos", personasSlice.getContent());
 
         return respuesta;
     }
